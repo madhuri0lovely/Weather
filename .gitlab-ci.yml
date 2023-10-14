@@ -1,21 +1,33 @@
-image:node:18.18.1-bullseye
+# You can copy and paste this template into a new `.gitlab-ci.yml` file.
+# You should not add this template to an existing `.gitlab-ci.yml` file by using the `include:` keyword.
+#
+# To contribute improvements to CI/CD templates, please follow the Development guide at:
+# https://docs.gitlab.com/ee/development/cicd/templates.html
+# This specific template is located at:
+# https://gitlab.com/gitlab-org/gitlab/-/blob/master/lib/gitlab/ci/templates/Nodejs.gitlab-ci.yml
 
-stages:
-  -setup
-  -test
+# Official framework image. Look for the different tagged releases at:
+# https://hub.docker.com/r/library/node/tags/
+image: 18.18.1-bullseye
 
-install:
-  stage:setup
+# This folder is cached between builds
+# https://docs.gitlab.com/ee/ci/yaml/index.html#cache
+cache:
+  paths:
+    - node_modules/
+
+test_async:
   script:
-    - npm ci
+    - npm install
+    - node ./specs/start.js ./specs/async.spec.js
 
-unit test:
-  stage:test
-  before_script:
-    -apt-get update
-    -wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
-    -apt install -y ./google-chrome*.deb;
-    -export CHROME_BIN=/usr/bin/google-chrome
+test_db:
   script:
-    -npm ci
-    -npm run test -- --no-watch --browsers=ChromeHeadlessCI
+    - npm install
+    - node ./specs/start.js ./specs/db-postgres.spec.js
+
+deploy:
+  stage: deploy
+  script: echo "Define your deployment script!"
+  environment: production
+
