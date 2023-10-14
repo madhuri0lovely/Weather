@@ -1,0 +1,10 @@
+image:node:18.18.1-bullseye
+
+stages:
+  -setup
+  -test
+
+install:
+  stage:setup
+  script:
+    - npm ci
